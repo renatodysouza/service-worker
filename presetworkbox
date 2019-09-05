@@ -7,34 +7,18 @@ if (workbox) {
     console.log(`Boo! Workbox didn't load 😬`);
   }
 
-  
-  //Precaching
-workbox.precaching.precacheAndRoute([
-    { url: '/index.html', revision: '0000' },
-    { url: '/style.css', revision: '0000' },
-    { url: '/index.js', revision: '0000' },
-]);
+
   //On https://ptsv2.com/t/n5y9f-1556037444 you can check for received posts
-const bgSyncPlugin = new workbox.backgroundSync.Plugin('queue', {
-    maxRetentionTime: 2200 // Retry for max of 24 Hours
+const bgSyncPlugin = new workbox.backgroundSync.Plugin('queueName', {
+    maxRetentionTime:  3000  // Retry for max of 24 Hours
 });
 
 workbox.routing.registerRoute(
-    'https://reqres.in/api/register',
+
+    'https://reqres.in/api/users',
     new workbox.strategies.NetworkOnly({
         plugins: [bgSyncPlugin]
     }),
     'POST'
 );
   
-
-workbox.routing.registerRoute(
-    new RegExp('/api/'),
-    new workbox.strategies.StaleWhileRevalidate({
-      plugins: [
-        new workbox.broadcastUpdate.Plugin({
-          channelName: 'api-updates',
-        }),
-      ],
-    })
-  );
