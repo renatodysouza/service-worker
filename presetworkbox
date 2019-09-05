@@ -10,9 +10,9 @@ if (workbox) {
   
   //Precaching
 workbox.precaching.precacheAndRoute([
-    { url: 'index.html', revision: '0000' },
-    { url: 'style.css', revision: '0000' },
-    { url: 'index.js', revision: '0000' },
+    { url: '/index.html', revision: '0000' },
+    { url: '/style.css', revision: '0000' },
+    { url: '/index.js', revision: '0000' },
 ]);
   //On https://ptsv2.com/t/n5y9f-1556037444 you can check for received posts
 const bgSyncPlugin = new workbox.backgroundSync.Plugin('queue', {
@@ -20,10 +20,21 @@ const bgSyncPlugin = new workbox.backgroundSync.Plugin('queue', {
 });
 
 workbox.routing.registerRoute(
-    'http://localhost:3000/send',
+    'https://reqres.in/api/register',
     new workbox.strategies.NetworkOnly({
         plugins: [bgSyncPlugin]
     }),
     'POST'
 );
   
+
+workbox.routing.registerRoute(
+    new RegExp('/api/'),
+    new workbox.strategies.StaleWhileRevalidate({
+      plugins: [
+        new workbox.broadcastUpdate.Plugin({
+          channelName: 'api-updates',
+        }),
+      ],
+    })
+  );
